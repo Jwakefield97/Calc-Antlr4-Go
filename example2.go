@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bufio"
+    "os"
 	"fmt"
 	"strconv"
+	"strings"
 	"./parser"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
@@ -98,5 +101,19 @@ func main() {
 
 	// // Finally parse the expression
 	// antlr.ParseTreeWalkerDefault.Walk(&calcListener{}, p.Start())
-	fmt.Println(calc("1 + 2 * 3"))
+	for {
+		buf := bufio.NewReader(os.Stdin)
+		fmt.Print("> ")
+		line, err := buf.ReadString('\n')
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			if(strings.EqualFold(line,"exit\n")) {
+				fmt.Println("in exit");
+				break;
+			} else {
+				fmt.Println(calc(line))
+			}
+		}
+	}
 }
