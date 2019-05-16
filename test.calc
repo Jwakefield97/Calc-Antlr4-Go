@@ -1,0 +1,5 @@
+//print(1)
+/*
+    some other comment in the code
+*/
+print(1*2)

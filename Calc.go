@@ -1,12 +1,12 @@
 package main
 
 import (
-	"bufio"
+	//"bufio"
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
-
+	//"strings"
+	"io/ioutil"
 	"./parser"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
@@ -75,23 +75,27 @@ func (l *calcListener) ExitNumber(c *parser.NumberContext) {
 
 //variable used in an expression
 func (l *calcListener) ExitVariableExp(c *parser.VariableExpContext) {
+	fmt.Println("var in exp")
 	fmt.Println(c)
 }
 
 //printing an expression
 func (l *calcListener) ExitPrintExp(c *parser.PrintExpContext) {
+	fmt.Println("print exp")
 	exp := strconv.Itoa(l.pop())
 	fmt.Println(exp)
 }
 
 //printing a variable
 func (l *calcListener) ExitPrintVar(c *parser.PrintVarContext) {
+	fmt.Println("print var")
 	exp := strconv.Itoa(l.pop())
 	fmt.Println(exp)
 }
 
 //variable declaration
 func (l *calcListener) ExitVariable(c *parser.VariableContext) {
+	fmt.Println("var dec")
 	fmt.Println(c)
 }
 
@@ -113,20 +117,26 @@ func calc(input string) {
 }
 
 func main() {
-	fmt.Println("Common calculator operations are supported (Add/Sub/Mult/Div). Type exit to leave the application.")
-	for {
-		buf := bufio.NewReader(os.Stdin)
-		fmt.Print("> ")
-		line, err := buf.ReadString('\n')
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			if strings.EqualFold(line, "exit\n") {
-				fmt.Println("exiting...")
-				break
-			} else {
-				calc(line)
-			}
-		}
-	}
+	bytes, err := ioutil.ReadFile(os.Args[1])
+	if err != nil {
+        fmt.Print(err)
+		panic("error opening file")
+    }
+	calc(string(bytes))
+	// fmt.Println("Common calculator operations are supported (Add/Sub/Mult/Div). Type exit to leave the application.")
+	// for {
+	// 	buf := bufio.NewReader(os.Stdin)
+	// 	fmt.Print("> ")
+	// 	line, err := buf.ReadString('\n')
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	} else {
+	// 		if strings.EqualFold(line, "exit\n") {
+	// 			fmt.Println("exiting...")
+	// 			break
+	// 		} else {
+	// 			calc(line)
+	// 		}
+	// 	}
+	// }
 }

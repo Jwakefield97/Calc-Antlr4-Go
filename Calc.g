@@ -11,6 +11,8 @@ PRINT: 'print';
 LET: 'let';
 VARNAME: [a-zA-Z]+;
 WHITESPACE: (' ' | '\r' | '\n' | '\t')+ -> skip;
+COMMENT: '/*' .*? '*/' -> channel(HIDDEN);
+LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
 
 // Rules
 start : expression | prints | variables EOF;
