@@ -2,5 +2,5 @@
 /*
     some other comment in the code
 */
-print(1*2)
-print(3)
+let d = 3
+print(d * 7)

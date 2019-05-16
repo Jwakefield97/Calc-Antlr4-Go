@@ -96,7 +96,8 @@ func (l *calcListener) ExitPrintVar(c *parser.PrintVarContext) {
 //variable declaration
 func (l *calcListener) ExitVariable(c *parser.VariableContext) {
 	fmt.Println("var dec")
-	fmt.Println(c)
+	i, _ := strconv.Atoi(c.GetStop().GetText())
+	l.push(i)
 }
 
 // calc takes a string expression and returns the evaluated result.

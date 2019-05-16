@@ -15,7 +15,14 @@ COMMENT: '/*' .*? '*/' -> channel(HIDDEN);
 LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
 
 // Rules
-start : expression+ | prints+ | variables+ EOF;
+start 
+    : variables* expression* prints*  EOF 
+    | variables* prints* expression*  EOF 
+    | expression* prints* variables* EOF
+    | expression* variables* prints* EOF 
+    | prints* variables* expression* EOF
+    | prints* expression* variables* EOF
+    ;
 
 expression
    : expression op=('*'|'/') expression # MulDiv
@@ -28,5 +35,5 @@ prints
     | PRINT '(' variables ')' # PrintVar
     ;
 variables 
-    : LET WHITESPACE? VARNAME  WHITESPACE? '=' WHITESPACE? (expression | VARNAME | NUMBER) # Variable
+    : LET (' ' | '\t')* VARNAME  (' ' | '\t')* '=' (' ' | '\t')* (expression) # Variable
     ;
