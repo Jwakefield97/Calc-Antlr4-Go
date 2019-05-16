@@ -15,7 +15,7 @@ COMMENT: '/*' .*? '*/' -> channel(HIDDEN);
 LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
 
 // Rules
-start : expression | prints | variables EOF;
+start : expression+ | prints+ | variables+ EOF;
 
 expression
    : expression op=('*'|'/') expression # MulDiv
