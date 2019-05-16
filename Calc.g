@@ -8,14 +8,23 @@ ADD: '+';
 SUB: '-';
 NUMBER: [0-9]+;
 PRINT: 'print';
-WHITESPACE: [ \r\n\t]+ -> skip;
+LET: 'let';
+VARNAME: [a-zA-Z]+;
+WHITESPACE: (' ' | '\r' | '\n' | '\t')+ -> skip;
 
 // Rules
-start : expression EOF;
+start : expression | prints | variables EOF;
 
 expression
    : expression op=('*'|'/') expression # MulDiv
    | expression op=('+'|'-') expression # AddSub
    | NUMBER                             # Number
-   | PRINT '(' expression ')' # Print
+   | VARNAME                            # VariableExp
    ;
+prints
+    : PRINT '(' expression ')' # PrintExp
+    | PRINT '(' variables ')' # PrintVar
+    ;
+variables 
+    : LET WHITESPACE? VARNAME  WHITESPACE? '=' WHITESPACE? (expression | VARNAME | NUMBER) # Variable
+    ;

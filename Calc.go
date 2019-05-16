@@ -13,7 +13,7 @@ import (
 
 type calcListener struct {
 	*parser.BaseCalcListener
-
+	variables map[string]int
 	stack []int
 }
 
@@ -35,6 +35,7 @@ func (l *calcListener) pop() int {
 	return result
 }
 
+//multiplication or division used in an expression
 func (l *calcListener) ExitMulDiv(c *parser.MulDivContext) {
 	right, left := l.pop(), l.pop()
 
@@ -48,6 +49,7 @@ func (l *calcListener) ExitMulDiv(c *parser.MulDivContext) {
 	}
 }
 
+//addition or subtraction in an expression
 func (l *calcListener) ExitAddSub(c *parser.AddSubContext) {
 	right, left := l.pop(), l.pop()
 
@@ -61,6 +63,7 @@ func (l *calcListener) ExitAddSub(c *parser.AddSubContext) {
 	}
 }
 
+//number used in an expression
 func (l *calcListener) ExitNumber(c *parser.NumberContext) {
 	i, err := strconv.Atoi(c.GetText())
 	if err != nil {
@@ -70,9 +73,26 @@ func (l *calcListener) ExitNumber(c *parser.NumberContext) {
 	l.push(i)
 }
 
-func (l *calcListener) ExitPrint(c *parser.PrintContext) {
+//variable used in an expression
+func (l *calcListener) ExitVariableExp(c *parser.VariableExpContext) {
+	fmt.Println(c)
+}
+
+//printing an expression
+func (l *calcListener) ExitPrintExp(c *parser.PrintExpContext) {
 	exp := strconv.Itoa(l.pop())
 	fmt.Println(exp)
+}
+
+//printing a variable
+func (l *calcListener) ExitPrintVar(c *parser.PrintVarContext) {
+	exp := strconv.Itoa(l.pop())
+	fmt.Println(exp)
+}
+
+//variable declaration
+func (l *calcListener) ExitVariable(c *parser.VariableContext) {
+	fmt.Println(c)
 }
 
 // calc takes a string expression and returns the evaluated result.
