@@ -70,8 +70,13 @@ func (l *calcListener) ExitNumber(c *parser.NumberContext) {
 	l.push(i)
 }
 
+func (l *calcListener) ExitPrint(c *parser.PrintContext) {
+	exp := strconv.Itoa(l.pop())
+	fmt.Println(exp)
+}
+
 // calc takes a string expression and returns the evaluated result.
-func calc(input string) int {
+func calc(input string) {
 	// Setup the input
 	is := antlr.NewInputStream(input)
 
@@ -85,23 +90,9 @@ func calc(input string) int {
 	// Finally parse the expression (by walking the tree)
 	var listener calcListener
 	antlr.ParseTreeWalkerDefault.Walk(&listener, p.Start())
-
-	return listener.pop()
 }
 
 func main() {
-	// // Setup the input
-	// is := antlr.NewInputStream("1 + 2 * 3")
-
-	// // Create the Lexer
-	// lexer := parser.NewCalcLexer(is)
-	// stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
-
-	// // Create the Parser
-	// p := parser.NewCalcParser(stream)
-
-	// // Finally parse the expression
-	// antlr.ParseTreeWalkerDefault.Walk(&calcListener{}, p.Start())
 	fmt.Println("Common calculator operations are supported (Add/Sub/Mult/Div). Type exit to leave the application.")
 	for {
 		buf := bufio.NewReader(os.Stdin)
@@ -114,7 +105,7 @@ func main() {
 				fmt.Println("exiting...")
 				break
 			} else {
-				fmt.Println("= " + strconv.Itoa(calc(line)))
+				calc(line)
 			}
 		}
 	}

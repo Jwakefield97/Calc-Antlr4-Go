@@ -17,4 +17,5 @@ expression
    : expression op=('*'|'/') expression # MulDiv
    | expression op=('+'|'-') expression # AddSub
    | NUMBER                             # Number
+   | PRINT '(' expression ')' # Print
    ;
