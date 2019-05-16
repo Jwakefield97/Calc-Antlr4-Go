@@ -7,6 +7,7 @@ DIV: '/';
 ADD: '+';
 SUB: '-';
 NUMBER: [0-9]+;
+PRINT: 'print';
 WHITESPACE: [ \r\n\t]+ -> skip;
 
 // Rules
