@@ -1,3 +1,3 @@
 rm -rf parser/
-antlr -Dlanguage=Go -o parser Calc.g # assumes you have antlr as an alias to the antlr4 jar.
+java -jar ~/scripts/antlr4.jar -Dlanguage=Go -o parser Calc.g
 go build Calc.go
