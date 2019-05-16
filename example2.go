@@ -2,10 +2,11 @@ package main
 
 import (
 	"bufio"
-    "os"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
+
 	"./parser"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
@@ -101,6 +102,7 @@ func main() {
 
 	// // Finally parse the expression
 	// antlr.ParseTreeWalkerDefault.Walk(&calcListener{}, p.Start())
+	fmt.Println("Common calculator operations are supported (Add/Sub/Mult/Div). Type exit to leave the application.")
 	for {
 		buf := bufio.NewReader(os.Stdin)
 		fmt.Print("> ")
@@ -108,11 +110,11 @@ func main() {
 		if err != nil {
 			fmt.Println(err)
 		} else {
-			if(strings.EqualFold(line,"exit\n")) {
-				fmt.Println("in exit");
-				break;
+			if strings.EqualFold(line, "exit\n") {
+				fmt.Println("exiting...")
+				break
 			} else {
-				fmt.Println(calc(line))
+				fmt.Println("= " + strconv.Itoa(calc(line)))
 			}
 		}
 	}
