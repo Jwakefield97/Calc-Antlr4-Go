@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	//"strings"
+	"strings"
 	"io/ioutil"
 	"./parser"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
@@ -13,7 +13,7 @@ import (
 
 type calcListener struct {
 	*parser.BaseCalcListener
-	variables map[string]int
+	Variables map[string]int
 	stack []int
 }
 
@@ -76,7 +76,7 @@ func (l *calcListener) ExitNumber(c *parser.NumberContext) {
 //variable used in an expression
 func (l *calcListener) ExitVariableExp(c *parser.VariableExpContext) {
 	fmt.Println("var in exp")
-	fmt.Println(c)
+	l.push(l.Variables[c.GetText()])
 }
 
 //printing an expression
@@ -93,11 +93,24 @@ func (l *calcListener) ExitPrintVar(c *parser.PrintVarContext) {
 	fmt.Println(exp)
 }
 
+//get the name of the variable from the declaration
+func (l *calcListener) getVarName(dec string) string {
+	noLet := strings.Replace(dec,"let","",-1);
+	return strings.TrimSpace(strings.Split(noLet,"=")[0])
+}
+
 //variable declaration
 func (l *calcListener) ExitVariable(c *parser.VariableContext) {
 	fmt.Println("var dec")
+	varName := l.getVarName(c.GetText());
 	i, _ := strconv.Atoi(c.GetStop().GetText())
-	l.push(i)
+	l.Variables[varName] = i
+}
+
+func NewCalcListener() calcListener {
+	c := calcListener{}
+	c.Variables = map[string]int{}
+	return c
 }
 
 // calc takes a string expression and returns the evaluated result.
@@ -113,7 +126,7 @@ func calc(input string) {
 	p := parser.NewCalcParser(stream)
 
 	// Finally parse the expression (by walking the tree)
-	var listener calcListener
+	listener := NewCalcListener()
 	antlr.ParseTreeWalkerDefault.Walk(&listener, p.Start())
 }
 

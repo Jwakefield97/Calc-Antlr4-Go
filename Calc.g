@@ -13,15 +13,11 @@ VARNAME: [a-zA-Z]+;
 WHITESPACE: (' ' | '\r' | '\n' | '\t')+ -> skip;
 COMMENT: '/*' .*? '*/' -> channel(HIDDEN);
 LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
+IDENTIFIER : [a-zA-Z]+;
 
 // Rules
 start 
     : variables* expression* prints*  EOF 
-    | variables* prints* expression*  EOF 
-    | expression* prints* variables* EOF
-    | expression* variables* prints* EOF 
-    | prints* variables* expression* EOF
-    | prints* expression* variables* EOF
     ;
 
 expression
@@ -35,5 +31,5 @@ prints
     | PRINT '(' variables ')' # PrintVar
     ;
 variables 
-    : LET (' ' | '\t')* VARNAME  (' ' | '\t')* '=' (' ' | '\t')* (expression) # Variable
+    : LET  VARNAME  '='  (expression) # Variable
     ;
