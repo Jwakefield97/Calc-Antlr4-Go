@@ -6,7 +6,8 @@ MUL: '*';
 DIV: '/';
 ADD: '+';
 SUB: '-';
-NUMBER: [0-9]+;
+MODULO: '%';
+CARAT: '^';
 PRINT: 'print';
 LET: 'let';
 VARNAME: [a-zA-Z]+;
@@ -19,9 +20,13 @@ IDENTIFIER : [a-zA-Z]+;
 start 
     : variables* expression* prints*  EOF 
     ;
-
+NUMBER
+    : ('0'..'9')+ '.' ('0'..'9')*
+    | '.' ('0'..'9')+ 
+    | ('0'..'9')+
+    ;
 expression
-   : expression op=('*'|'/') expression # MulDiv
+   : expression op=('*'|'/'|'%'|'^') expression # MulDiv
    | expression op=('+'|'-') expression # AddSub
    | NUMBER                             # Number
    | VARNAME                            # VariableExp

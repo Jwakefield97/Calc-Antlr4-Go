@@ -3,6 +3,7 @@ package main
 import (
 	//"bufio"
 	"fmt"
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -13,15 +14,15 @@ import (
 
 type calcListener struct {
 	*parser.BaseCalcListener
-	Variables map[string]int
-	stack []int
+	Variables map[string]float64
+	stack []float64
 }
 
-func (l *calcListener) push(i int) {
+func (l *calcListener) push(i float64) {
 	l.stack = append(l.stack, i)
 }
 
-func (l *calcListener) pop() int {
+func (l *calcListener) pop() float64 {
 	if len(l.stack) < 1 {
 		panic("stack is empty unable to pop")
 	}
@@ -44,6 +45,10 @@ func (l *calcListener) ExitMulDiv(c *parser.MulDivContext) {
 		l.push(left * right)
 	case parser.CalcParserDIV:
 		l.push(left / right)
+	case parser.CalcParserCARAT:
+		l.push(math.Pow(left,right))
+	case parser.CalcParserMODULO: 
+		l.push(float64(int(left) % int(right)))
 	default:
 		panic(fmt.Sprintf("unexpected op: %s", c.GetOp().GetText()))
 	}
@@ -65,7 +70,7 @@ func (l *calcListener) ExitAddSub(c *parser.AddSubContext) {
 
 //number used in an expression
 func (l *calcListener) ExitNumber(c *parser.NumberContext) {
-	i, err := strconv.Atoi(c.GetText())
+	i, err := strconv.ParseFloat(c.GetText(), 64)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -75,21 +80,18 @@ func (l *calcListener) ExitNumber(c *parser.NumberContext) {
 
 //variable used in an expression
 func (l *calcListener) ExitVariableExp(c *parser.VariableExpContext) {
-	fmt.Println("var in exp")
 	l.push(l.Variables[c.GetText()])
 }
 
 //printing an expression
 func (l *calcListener) ExitPrintExp(c *parser.PrintExpContext) {
-	fmt.Println("print exp")
-	exp := strconv.Itoa(l.pop())
+	exp := fmt.Sprintf("%f",l.pop())
 	fmt.Println(exp)
 }
 
 //printing a variable
 func (l *calcListener) ExitPrintVar(c *parser.PrintVarContext) {
-	fmt.Println("print var")
-	exp := strconv.Itoa(l.pop())
+	exp := fmt.Sprintf("%f",l.pop())
 	fmt.Println(exp)
 }
 
@@ -101,15 +103,14 @@ func (l *calcListener) getVarName(dec string) string {
 
 //variable declaration
 func (l *calcListener) ExitVariable(c *parser.VariableContext) {
-	fmt.Println("var dec")
 	varName := l.getVarName(c.GetText());
-	i, _ := strconv.Atoi(c.GetStop().GetText())
+	i, _ := strconv.ParseFloat(c.GetStop().GetText(), 64)
 	l.Variables[varName] = i
 }
 
 func NewCalcListener() calcListener {
 	c := calcListener{}
-	c.Variables = map[string]int{}
+	c.Variables = map[string]float64{}
 	return c
 }
 
